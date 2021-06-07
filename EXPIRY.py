@@ -25,7 +25,7 @@ kite.set_access_token(Credentials.access_token)
 position=kite.positions()
 all_positions=position["net"]
 
-		#*****************DEFINING variables****************************************************************************************************************
+		#DEFINING variables---------------------------------------------------------------------------------------------------------------------------------
 Position_tokens=[]
 Positions_symbol=[]
 Positions_instruementtockens=[]
@@ -173,6 +173,9 @@ instrument_token_LTP=dict.fromkeys(instrument_token,"-1")
 
 Red_flag=0
 
+def on_close(ws, code, reason):
+    ws.stop()
+
 def on_ticks(ws, ticks):
 	global instrument_first_position
 	global instrument_second_position
@@ -234,7 +237,7 @@ def on_ticks(ws, ticks):
 
 	if unrealised_first_position<unrealised_second_position:
 		Closest_instrument_value=min(instrument_token_LTP_CE_check, key=lambda y:abs(float(instrument_token_LTP_CE_check[y])-instrument_token_LTP[instrument_first_position]))
-		if Closest_instrument_value != instrument_second_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] < Ticker_instruement_dict[instrument_second_position][-7:-2] and (instrument_token_LTP[instrument_first_position]-instrument_token_LTP_CE_check[Closest_instrument_value])>8:
+		if Closest_instrument_value != instrument_second_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] < Ticker_instruement_dict[instrument_second_position][-7:-2] and (instrument_token_LTP[instrument_first_position]-instrument_token_LTP_CE_check[Closest_instrument_value])>min(instrument_token_LTP[instrument_first_position]/4,8):
 			Red_flag+=1
 			if Red_flag>(int(START[-7:-2])-int(END[-7:-2]))/50 + 1:
 				SquareOffAllPositions()
@@ -253,7 +256,7 @@ def on_ticks(ws, ticks):
 		
 	elif unrealised_first_position>unrealised_second_position:
 		Closest_instrument_value=min(instrument_token_LTP_PE_check, key=lambda y:abs(float(instrument_token_LTP_PE_check[y])-instrument_token_LTP[instrument_second_position]))
-		if Closest_instrument_value!=instrument_first_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] > Ticker_instruement_dict[instrument_first_position][-7:-2] and  (instrument_token_LTP[instrument_second_position]-instrument_token_LTP_PE_check[Closest_instrument_value])>8:
+		if Closest_instrument_value!=instrument_first_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] > Ticker_instruement_dict[instrument_first_position][-7:-2] and  (instrument_token_LTP[instrument_second_position]-instrument_token_LTP_PE_check[Closest_instrument_value])>min(instrument_token_LTP[instrument_second_position]/4,8):
 			Red_flag+=1
 			if Red_flag>(int(START[-7:-2])-int(END[-7:-2]))/50 + 1:
 				SquareOffAllPositions()
@@ -274,11 +277,7 @@ def on_ticks(ws, ticks):
 def on_connect(ws, response):
     ws.subscribe(instrument_token)
     ws.set_mode(ws.MODE_FULL,instrument_token )
-
-def on_close(ws, code, reason):
-    ws.stop()
     
-
 kws.on_ticks = on_ticks
 kws.on_connect = on_connect
 
