@@ -33,7 +33,7 @@ Quantity=[]
 Date="6/10/2021"
 
 for n in all_positions:
-	if n["product"]== "NRML" and n["sell_price"]>0 and n["quantity"]<0:
+	if n["product"]== "MIS" and n["sell_price"]>0 and n["quantity"]<0:
 		# position_tokens[n["instrument_token"]]={"SELL":n["average_price"],"CURRENT":0,"Quantity":abs(n["quantity"]),"TRADINGSYMBOL":n["tradingsymbol"]}
 		token={n["instrument_token"]:{"SELL":n["average_price"],"CURRENT":0,"QUANTITY":abs(n["quantity"]),"TRADINGSYMBOL":n["tradingsymbol"]}}
 		Position_tokens.append(token)
