@@ -30,7 +30,7 @@ Position_tokens=[]
 Positions_symbol=[]
 Positions_instruementtockens=[]
 Quantity=[]
-Date="6/10/2021"
+Date="6/17/2021"
 
 for n in all_positions:
 	if n["product"]== "MIS" and n["sell_price"]>0 and n["quantity"]<0:
