@@ -11,9 +11,8 @@ import pdb
 kws=""	
 kite=""
 api_k="5i48ezu1z2ypbuea"
-api_s="bztby2b0xt8ro2qmsgxqfrqulaagg1md"	
+api_s="dv7k77rbc7yad37ngtzn630503uvbr42"	
 access_token=""
-
 def get_login(api_k,api_s):
 	kite=KiteConnect(api_key=api_k)
 	print("[*] Generate access Token:",kite.login_url())
