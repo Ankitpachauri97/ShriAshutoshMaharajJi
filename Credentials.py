@@ -1,4 +1,4 @@
 api_key="5i48ezu1z2ypbuea"
 api_secret="dv7k77rbc7yad37ngtzn630503uvbr42"
-request_token="5qZjNCVJwd6eNEOFmlUDjO9HgQO4IuUQ"
-access_token="wcZeB6wazkHu4uzxcPnsIU4pK0gtT7Sg"
+request_token="S33TW7KXvadHLsjVsOgaQe7OP4ZUxOgG"
+access_token="RIrTwr5dmzk3PmUtXen3s1X8Mgf7y4Gu"
