@@ -30,7 +30,7 @@ Position_tokens=[]
 Positions_symbol=[]
 Positions_instruementtockens=[]
 Quantity=[]
-Date="7/1/2021"
+Date="3/24/2022"
 ct=datetime.datetime.now()
 print(ct)
 
@@ -90,7 +90,7 @@ instrument_token=[]
 instrument_token1=[]
 
 
-with open('bm_instruments1.txt','r') as csv_file:
+with open('Instrument2022.txt','r') as csv_file:
 	csv_reader = csv.reader(csv_file)
 	next(csv_reader)
 	for n in csv_reader:
@@ -126,7 +126,8 @@ Quantity=abs(Quantity[0])
 Product="kite.PRODUCT_"+PRODUCT_MIS_NRML #MIS (for intraday) NRML for positional
 
 def ApplyOrders(buying_back,selling_lot,Quantity):
-		kite.place_order(tradingsymbol=buying_back,
+	pprint("orders Placed" + str(buying_back) + str(selling_lot))
+	kite.place_order(tradingsymbol=buying_back,
                                 exchange=kite.EXCHANGE_NFO,
                                 variety=kite.VARIETY_REGULAR,
                                 transaction_type=kite.TRANSACTION_TYPE_BUY,
@@ -134,7 +135,7 @@ def ApplyOrders(buying_back,selling_lot,Quantity):
                                 order_type=kite.ORDER_TYPE_MARKET,
                                 product=kite.PRODUCT_MIS)
 
-		kite.place_order(tradingsymbol=selling_lot,
+	kite.place_order(tradingsymbol=selling_lot,
                                 exchange=kite.EXCHANGE_NFO,
                                 variety=kite.VARIETY_REGULAR,
                                 transaction_type=kite.TRANSACTION_TYPE_SELL,
@@ -173,8 +174,8 @@ def on_ticks(ws, ticks):
 
 			#writing the unrealised profits and losses code to satisfy the conditional algorithm down-----------------------------------------------------
 
-	unrealised_first_position=(position_token_LTP_FIRST[instrument_first_position]["SELL"]-position_token_LTP_FIRST[instrument_first_position]["CURRENT"])*Quantity
-	unrealised_second_position=(position_token_LTP_LAST[instrument_second_position]["SELL"]-position_token_LTP_LAST[instrument_second_position]["CURRENT"])*Quantity
+	unrealised_first_position=(position_token_LTP_FIRST[instrument_first_position]["SELL"]-position_token_LTP_FIRST[instrument_first_position]["CURRENT"])*Quantity*5
+	unrealised_second_position=(position_token_LTP_LAST[instrument_second_position]["SELL"]-position_token_LTP_LAST[instrument_second_position]["CURRENT"])*Quantity*5
 
 	print(int(unrealised_first_position),int(unrealised_second_position))
 
@@ -197,9 +198,10 @@ def on_ticks(ws, ticks):
 
  			##Moving down the calls-------------------------------------------------------------------------------------------------------------------------
 
-	if unrealised_first_position<unrealised_second_position:
+	if unrealised_first_position<unrealised_second_position and unrealised_second_position>0:
 		Closest_instrument_value=min(instrument_token_LTP_CE_check, key=lambda y:abs(float(instrument_token_LTP_CE_check[y])-instrument_token_LTP[instrument_first_position]))
-		if Closest_instrument_value != instrument_second_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] < Ticker_instruement_dict[instrument_second_position][-7:-2] and (instrument_token_LTP[instrument_first_position]-instrument_token_LTP_CE_check[Closest_instrument_value])>min(instrument_token_LTP[instrument_first_position]/4,6):
+		pprint("Nearing call Down"+ ' ' + get_key(Closest_instrument_value) + ' ' + str((round(instrument_token_LTP[instrument_first_position]-instrument_token_LTP_CE_check[Closest_instrument_value],2))))
+		if Closest_instrument_value != instrument_second_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] < Ticker_instruement_dict[instrument_second_position][-7:-2] and (instrument_token_LTP[instrument_first_position]-instrument_token_LTP_CE_check[Closest_instrument_value])>min(instrument_token_LTP[instrument_first_position]/4,4):
 			buying_back = get_key(instrument_second_position)
 			selling_lot = get_key(Closest_instrument_value)
 			print(selling_lot,buying_back)
@@ -210,9 +212,10 @@ def on_ticks(ws, ticks):
 
 			##Moving up the puts ----------------------------------------------------------------------------------------------------------------------------
 		
-	elif unrealised_first_position>unrealised_second_position:
+	elif unrealised_first_position>unrealised_second_position and unrealised_first_position>0:
 		Closest_instrument_value=min(instrument_token_LTP_PE_check, key=lambda y:abs(float(instrument_token_LTP_PE_check[y])-instrument_token_LTP[instrument_second_position]))
-		if Closest_instrument_value!=instrument_first_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] > Ticker_instruement_dict[instrument_first_position][-7:-2] and  (instrument_token_LTP[instrument_second_position]-instrument_token_LTP_PE_check[Closest_instrument_value])>min(instrument_token_LTP[instrument_second_position]/4,6):
+		pprint("nearing put up"+ ' ' + get_key(Closest_instrument_value) + ' ' + str((round(instrument_token_LTP[instrument_second_position]-instrument_token_LTP_PE_check[Closest_instrument_value],2))))
+		if Closest_instrument_value!=instrument_first_position and Ticker_instruement_dict[Closest_instrument_value][-7:-2] > Ticker_instruement_dict[instrument_first_position][-7:-2] and  (instrument_token_LTP[instrument_second_position]-instrument_token_LTP_PE_check[Closest_instrument_value])>min(instrument_token_LTP[instrument_second_position]/4,4):
 	 		buying_back = get_key(instrument_first_position)
 	 		selling_lot = get_key(Closest_instrument_value)
 	 		print(selling_lot,buying_back)
