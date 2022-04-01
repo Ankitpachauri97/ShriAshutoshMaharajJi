@@ -1,5 +1,7 @@
 
 
+from hashlib import new
+import webbrowser
 from kiteconnect import KiteConnect
 from kiteconnect import KiteTicker
 from pprint import pprint
@@ -7,6 +9,13 @@ import logging
 import pandas as pd 
 import datetime
 import pdb
+
+import requests
+from bs4 import BeautifulSoup
+from pywebio.input import *
+from pywebio.output import *
+from pywebio.session import *
+
 
 kws=""	
 kite=""
@@ -16,6 +25,7 @@ access_token=""
 def get_login(api_k,api_s):
 	kite=KiteConnect(api_key=api_k)
 	print("[*] Generate access Token:",kite.login_url())
+	webbrowser.open(kite.login_url(), new=1)
 	val=input ("[*] Enter your request token here:")
 	data=kite.generate_session(val,api_secret=api_s)
 	print(data["access_token"])

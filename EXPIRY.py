@@ -269,7 +269,7 @@ def on_ticks(ws, ticks):
 
     # -----------------------------Code to check time and initiate OrderExit function ---------------------------------------------------------------------------
     if ExitTime.time() < datetime.now().time():
-        if flag < 0:
+        if flag < 1:
             ExitAllOrder(ExitFirst, ExitSecond, firstBuyingPosition,
                          secondBuyingPosition, Quantity)
             flag += 1
@@ -328,8 +328,8 @@ def on_ticks(ws, ticks):
             float(InstrumentToken_LTPList_CE_check[y])-InstrumentToken_LTPList[instrument_first_position]))
 
         pprint("Nearing call Down" + ' ' + get_key(Closest_instrument_value) + ' ' +
-               str(round(InstrumentToken_LTPList[instrument_first_position]-InstrumentToken_LTPList[Closest_instrument_value], 2)) + ' ' + str(round(InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_second_position], 2)/2.15))
-        if (Closest_instrument_value != instrument_second_position and InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value][-7:-2] < InstrumentTokenList_TradingSymbolList_dict[instrument_second_position][-7:-2]) and ((InstrumentToken_LTPList[instrument_first_position]-InstrumentToken_LTPList[Closest_instrument_value]) > ((InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_second_position])/2.15)):
+               str(round(InstrumentToken_LTPList[instrument_first_position]-InstrumentToken_LTPList[Closest_instrument_value], 2)) + ' ' + str(round(InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_second_position], 2)/2.20))
+        if (Closest_instrument_value != instrument_second_position and InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value][-7:-2] < InstrumentTokenList_TradingSymbolList_dict[instrument_second_position][-7:-2]) and ((InstrumentToken_LTPList[instrument_first_position]-InstrumentToken_LTPList[Closest_instrument_value]) > min(6,(InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_second_position])/2.20)):
             buying_back = get_key(instrument_second_position)
             selling_lot = get_key(Closest_instrument_value)
             print(buying_back, selling_lot)
@@ -346,7 +346,7 @@ def on_ticks(ws, ticks):
             InstrumentToken_LTPList_PE_check[y])-InstrumentToken_LTPList[instrument_second_position]))
         pprint("nearing put up" + ' ' + get_key(Closest_instrument_value) + ' ' +
                str(round(InstrumentToken_LTPList[instrument_second_position]-InstrumentToken_LTPList[Closest_instrument_value], 2)) + ' ' + str(round(InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_first_position], 2)/2.15))
-        if (Closest_instrument_value != instrument_first_position and InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value][-7:-2] > InstrumentTokenList_TradingSymbolList_dict[instrument_first_position][-7:-2]) and ((InstrumentToken_LTPList[instrument_second_position]-InstrumentToken_LTPList[Closest_instrument_value]) > ((InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_first_position])/2.15)):
+        if (Closest_instrument_value != instrument_first_position and InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value][-7:-2] > InstrumentTokenList_TradingSymbolList_dict[instrument_first_position][-7:-2]) and ((InstrumentToken_LTPList[instrument_second_position]-InstrumentToken_LTPList[Closest_instrument_value]) > min(6,(InstrumentToken_LTPList[Closest_instrument_value]-InstrumentToken_LTPList[instrument_first_position])/2.15)):
             buying_back = get_key(instrument_first_position)
             selling_lot = get_key(Closest_instrument_value)
             print(buying_back, selling_lot)
