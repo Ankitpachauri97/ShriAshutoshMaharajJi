@@ -33,10 +33,7 @@ ExecuteTime = datetime(2022, 2, 1, 9, 21, 0)
 ExitTime = datetime(2022, 2, 1, 15, 29, 55)
 CrendintialFlagTime = datetime(1997, 3, 1, 8, 30, 0)
 # Credentials will be pushed at 8:30 morning
-
 CrendintialFlag = -1
-DateCombineVariable = datetime(1,1,1,0,0,0)
-DatenTimeNow = datetime.now()
 
 Weekdays_weekends = {'Monday': '1', 'Tuesday': '1',
             'Wednesday': '1', 'Thursday': '1', 'Friday': '3','Saturday': '2','Sunday':'1'}
@@ -101,11 +98,9 @@ def get_login(api_k, api_s):
         pause.until(combined)
 
         
-# while(CrendintialFlag < 0):
-#     if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() >datetime.now().time()):
-#         get_login(api_k, api_s)
-#     else:
-#         print("paused")
-#         pause.minutes(5)
-
-get_login(api_k, api_s)
+while(CrendintialFlag < 0):
+    if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() >datetime.now().time()):
+        get_login(api_k, api_s)
+    else:
+        print("paused")
+        pause.minutes(5)
