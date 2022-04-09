@@ -9,14 +9,15 @@ import logging
 import pandas as pd
 import datetime
 import pdb
-from pushbullet import PushBullet
+from pushbullet import Pushbullet
 import os
 from datetime import datetime, timedelta
 import time
 import pause
+
 # push bullet access token and variables
 Pb_access_token = "o.86YtIBmZe3VMJPs94uCbC5W3DUBwEnGY"
-pb = PushBullet(Pb_access_token)
+pb = Pushbullet(Pb_access_token)
 latestpush = "will get latest data in this variable"
 s2 = "request_token="
 flagship = 0
