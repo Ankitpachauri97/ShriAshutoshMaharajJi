@@ -79,13 +79,14 @@ def get_login(api_k, api_s):
     while(flagship > 0):
         if ExecuteTime.time() < datetime.now().time():
             flagship = flagship-1
-            RunCmd = "python FileReadingCode.py"
+            RunCmd = "python EXPIRY.py"
             os.system(RunCmd)
 
         else:
             currdate = datetime.now('%#m/%#d/%Y')
             Executetime= ExecuteTime.time()
             combined = datetime.datetime.combine(currdate,Executetime)
+            print(combined)
             pause.until(combined)
             
 
@@ -95,6 +96,7 @@ def get_login(api_k, api_s):
         currdate = datetime.now('%#m/%#d/%Y') + timedelta(days=int(Weekdays_weekends[Day])).strftime("%#m/%#d/%Y")
         credentialTime= CrendintialFlagTime.time()
         combined = datetime.datetime.combine(currdate,credentialTime)
+        print(combined)
         pause.until(combined)
 
         
