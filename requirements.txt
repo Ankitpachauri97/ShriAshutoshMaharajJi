@@ -14,6 +14,7 @@ incremental==21.3.0
 kiteconnect==3.9.2
 numpy==1.20.3
 pandas==1.2.4
+pushbullet.py==0.9.1
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycodestyle==2.7.0
