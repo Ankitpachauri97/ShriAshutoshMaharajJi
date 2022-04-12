@@ -29,14 +29,16 @@ api_k = "5i48ezu1z2ypbuea"
 api_s = "vyozf69w4b6t4io7n4r58xmmo5qemxpk"
 access_token = ""
 # code Execution will start on 9:22 morning
-ExecuteTime = datetime(2022, 2, 1, 9, 21, 0)
+ExecuteTime = datetime(2022, 2, 1, 9, 22, 0)
 ExitTime = datetime(2022, 2, 1, 15, 29, 55)
 CrendintialFlagTime = datetime(1997, 3, 1, 8, 30, 0)
+
 # Credentials will be pushed at 8:30 morning
 CrendintialFlag = -1
 
 Weekdays_weekends = {'Monday': '1', 'Tuesday': '1',
-            'Wednesday': '1', 'Thursday': '1', 'Friday': '3','Saturday': '2','Sunday':'1'}
+                     'Wednesday': '1', 'Thursday': '1', 'Friday': '3', 'Saturday': '2', 'Sunday': '1'}
+
 
 def get_login(api_k, api_s):
     global flagship
@@ -77,31 +79,40 @@ def get_login(api_k, api_s):
     my_file.close()
 
     while(flagship > 0):
-        if ExecuteTime.time() < datetime.now().time():
+        if (ExecuteTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
             flagship = flagship-1
             RunCmd = "python EXPIRY.py"
-            os.system(RunCmd)
+            try:
+                os.system(RunCmd)
+            except LookupError:
+                print("Some Error has occured")
+            print("working on Expiry Code")
 
         else:
-            currdate = datetime.now('%#m/%#d/%Y')
-            Executetime= ExecuteTime.time()
-            combined = datetime.datetime.combine(currdate,Executetime)
+            currdate =  datetime.now().date()
+            Executetime = ExecuteTime.time()
+            combined = datetime.combine(currdate, Executetime)
             print(combined)
             pause.until(combined)
-            
 
-    while(ExitTime.time() < datetime.now().time() and flagship <1):
-        flagship+=1
-        Day = datetime.now().strftime("%A")
-        currdate = datetime.now('%#m/%#d/%Y') + timedelta(days=int(Weekdays_weekends[Day])).strftime("%#m/%#d/%Y")
-        credentialTime= CrendintialFlagTime.time()
-        combined = datetime.datetime.combine(currdate,credentialTime)
-        print(combined)
-        pause.until(combined)
+    while(flagship < 1):
+        if ExitTime.time() < datetime.now().time():
+            flagship += 1
+            Day = datetime.now().strftime("%A")
+            currdate = datetime.now().date() + \
+                timedelta(days=int(Weekdays_weekends[Day]))
+            credentialTime = CrendintialFlagTime.time()
+            combined = datetime.combine(currdate, credentialTime)
+            print(combined)
+            pause.until(combined)
+        else:
+            print("paused")
+            pause.minutes(5)
 
-        
+
 while(CrendintialFlag < 0):
-    if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() >datetime.now().time()):
+    print("in while")
+    if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
         get_login(api_k, api_s)
     else:
         print("paused")
