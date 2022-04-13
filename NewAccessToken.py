@@ -87,17 +87,6 @@ def get_login(api_k, api_s):
             except LookupError:
                 print("Some Error has occured")
             print("working on Expiry Code")
-
-        else:
-            currdate =  datetime.now().date()
-            Executetime = ExecuteTime.time()
-            combined = datetime.combine(currdate, Executetime)
-            print(combined)
-            pause.until(combined)
-
-    while(flagship < 1):
-        if ExitTime.time() < datetime.now().time():
-            flagship += 1
             Day = datetime.now().strftime("%A")
             currdate = datetime.now().date() + \
                 timedelta(days=int(Weekdays_weekends[Day]))
@@ -105,9 +94,13 @@ def get_login(api_k, api_s):
             combined = datetime.combine(currdate, credentialTime)
             print(combined)
             pause.until(combined)
+
         else:
-            print("paused")
-            pause.minutes(5)
+            currdate = datetime.now().date()
+            Executetime = ExecuteTime.time()
+            combined = datetime.combine(currdate, Executetime)
+            print(combined)
+            pause.until(combined)
 
 
 while(CrendintialFlag < 0):
