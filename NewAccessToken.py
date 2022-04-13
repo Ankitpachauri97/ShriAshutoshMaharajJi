@@ -111,6 +111,7 @@ def get_login(api_k, api_s):
 
 
 while(CrendintialFlag < 0):
+    print(datetime.now())
     print("in while")
     if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
         get_login(api_k, api_s)
