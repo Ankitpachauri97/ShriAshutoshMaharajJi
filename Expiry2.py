@@ -382,10 +382,4 @@ except LookupError:
     print(combined)
     pb.push_note("No Positions were taken today Closing the code for next date", combined.isoformat())
     pause.until(combined)
-except Exception:
-    print("some Exception has occured")
-    pass
-except:
-    print("Lets continue to run the code again")
-    pass
 
