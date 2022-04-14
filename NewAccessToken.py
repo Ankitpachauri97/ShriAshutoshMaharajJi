@@ -1,20 +1,14 @@
 
 
 from hashlib import new
-import webbrowser
 from kiteconnect import KiteConnect
-from kiteconnect import KiteTicker
 from pprint import pprint
-import logging
-import pandas as pd
 import datetime
-import pdb
 from pushbullet import Pushbullet
 import os
 from datetime import datetime, timedelta
 import time
 import pause
-
 # push bullet access token and variables
 Pb_access_token = "o.86YtIBmZe3VMJPs94uCbC5W3DUBwEnGY"
 pb = Pushbullet(Pb_access_token)
@@ -28,7 +22,9 @@ kite = ""
 api_k = "5i48ezu1z2ypbuea"
 api_s = "vyozf69w4b6t4io7n4r58xmmo5qemxpk"
 access_token = ""
-# code Execution will start on 9:22 morning
+
+
+# code Execution will start on 9:22 morning and function CombinedDateTime is based on these value
 ExecuteTime = datetime(2022, 2, 1, 9, 22, 0)
 ExitTime = datetime(2022, 2, 1, 15, 29, 55)
 CrendintialFlagTime = datetime(1997, 3, 1, 8, 30, 0)
@@ -39,12 +35,23 @@ CrendintialFlag = -1
 Weekdays_weekends = {'Monday': '1', 'Tuesday': '1',
                      'Wednesday': '1', 'Thursday': '1', 'Friday': '3', 'Saturday': '2', 'Sunday': '1'}
 
+def CombinedDateTime(whichTime):
+        Day = datetime.now().strftime("%A")
+        currdate = datetime.now().date() + \
+            timedelta(days=int(Weekdays_weekends[Day]))
+        DependentTime = whichTime.time()
+        combined = datetime.combine(currdate, DependentTime)
+        pb.push_note("Paused Till", combined.isoformat())
+        print(combined)
+        pause.until(combined)
 
 def get_login(api_k, api_s):
     global flagship
+    global data
     kite = KiteConnect(api_key=api_k)
     print("[*] Generate access Token:", kite.login_url())
     pb.push_link("Login For Access Token", kite.login_url())
+    pause.minutes(45)   #Till 9:15 code will be paused and will try to read the push then
     while(flagship < 1):
         print("checking")
         latestpush = pb.get_pushes()[0]['url']
@@ -78,30 +85,15 @@ def get_login(api_k, api_s):
     my_file.write("\n")
     my_file.close()
 
-    while(flagship > 0):
-        if (ExecuteTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
-            flagship = flagship-1
-            RunCmd = "python EXPIRY.py"
-            try:
-                os.system(RunCmd)
-            except LookupError:
-                print("Some Error has occured")
-            print("working on Expiry Code")
-            Day = datetime.now().strftime("%A")
-            currdate = datetime.now().date() + \
-                timedelta(days=int(Weekdays_weekends[Day]))
-            credentialTime = CrendintialFlagTime.time()
-            combined = datetime.combine(currdate, credentialTime)
-            print(combined)
-            pause.until(combined)
+    CombinedDateTime(ExecuteTime)   
 
-        else:
-            currdate = datetime.now().date()
-            Executetime = ExecuteTime.time()
-            combined = datetime.combine(currdate, Executetime)
-            print(combined)
-            pause.until(combined)
+    if (ExecuteTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
+        pb.push_note("Status", "started Runnning your main Code")
+        RunCmd = "python Expiry2.py"
+        os.system(RunCmd)
 
+    elif(ExitTime.time() < datetime.now().time()):
+        CombinedDateTime(CrendintialFlagTime)
 
 while(CrendintialFlag < 0):
     print(datetime.now())
@@ -109,5 +101,4 @@ while(CrendintialFlag < 0):
     if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
         get_login(api_k, api_s)
     else:
-        print("paused")
-        pause.minutes(5)
+        CombinedDateTime(CrendintialFlagTime)
