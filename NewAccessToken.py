@@ -62,7 +62,6 @@ def get_login(api_k, api_s):
                 s2) + len(s2):latestpush.index(s2) + len(s2)+int(32)]
             print(val)
             flagship += 1
-        pause.minutes(5)
     data = kite.generate_session(str(val), api_secret=api_s)
     print(data["access_token"])
     access_token = data["access_token"]
