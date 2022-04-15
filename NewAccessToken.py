@@ -104,4 +104,4 @@ while(CrendintialFlag < 0):
     if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
         get_login(api_k, api_s)
     else:
-        CombinedDateTime(CrendintialFlagTime)
+        pause.hours(2)
