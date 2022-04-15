@@ -53,8 +53,7 @@ def get_login(api_k, api_s):
     global data
     kite = KiteConnect(api_key=api_k)
     print("[*] Generate access Token:", kite.login_url())
-    pb.push_link("Login For Access Token", kite.login_url())
-    pause.minutes(45)   #Till 9:15 code will be paused and will try to read the push then
+    pb.push_link("Login For Access Token", kite.login_url())   #Till 9:15 code will be paused and will try to read the push then
     while(flagship < 1):
         print("checking")
         latestpush = pb.get_pushes()[0]['url']
@@ -63,6 +62,7 @@ def get_login(api_k, api_s):
                 s2) + len(s2):latestpush.index(s2) + len(s2)+int(32)]
             print(val)
             flagship += 1
+        pause.minutes(5)
     data = kite.generate_session(str(val), api_secret=api_s)
     print(data["access_token"])
     access_token = data["access_token"]
