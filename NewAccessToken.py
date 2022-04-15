@@ -37,8 +37,11 @@ Weekdays_weekends = {'Monday': '1', 'Tuesday': '1',
 
 def CombinedDateTime(whichTime):
         Day = datetime.now().strftime("%A")
-        currdate = datetime.now().date() + \
-            timedelta(days=int(Weekdays_weekends[Day]))
+        if(whichTime == CrendintialFlagTime ):
+            currdate = datetime.now().date() + \
+                timedelta(days=int(Weekdays_weekends[Day]))
+        else:
+            currdate=datetime.now().date()
         DependentTime = whichTime.time()
         combined = datetime.combine(currdate, DependentTime)
         pb.push_note("Paused Till", combined.isoformat())
