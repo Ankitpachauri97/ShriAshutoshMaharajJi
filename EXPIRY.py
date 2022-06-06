@@ -11,6 +11,12 @@ import json
 from datetime import datetime, timedelta
 import time
 
+#--------------------------------Sending Notifications on mobile-----------------------------------------------------------------------------------------------
+# from pushbullet import PushBullet
+# Pb_access_token = "o.86YtIBmZe3VMJPs94uCbC5W3DUBwEnGY"
+# pb = PushBullet(Pb_access_token)
+
+
 # *******************************************************SETTING UP THE CONNECTION*******************************************DO NOT TOUCH**********************
 # initialisation
 logging.basicConfig(level=logging.DEBUG)
@@ -54,7 +60,8 @@ BuyingPositions_Symbol = []
 # -------------------------------Getting the positions in terminal and all the related values------------------------------------------------------------------
 
 for n in all_positions:
-    if n["product"] == "NRML" and n["sell_price"] > 0 and n["quantity"] < 0:
+    if n["product"] == "MIS" and n["sell_price"] > 0 and n["quantity"] < 0:
+        print(n)
         # position_tokens[n["instrument_token"]]={"SELL":n["average_price"],"CURRENT":0,"Quantity":abs(n["quantity"]),"TRADINGSYMBOL":n["tradingsymbol"]}
         token = {n["instrument_token"]: {"SELL": round(n["average_price"], 1), "CURRENT": round(
             0, 1), "QUANTITY": abs(n["quantity"]), "TRADINGSYMBOL": n["tradingsymbol"]}}
@@ -62,9 +69,9 @@ for n in all_positions:
         Positions_symbol.append(n["tradingsymbol"])
         Positions_InstrumentTokens.append(n["instrument_token"])
         Quantity.append(n["quantity"])
-        PRODUCT_MIS_NRML = n["product"]
+        PRODUCT_MIS_MIS = n["product"]
 
-    if n["product"] == "NRML" and n["buy_price"] > 0 and n["quantity"] > 0:
+    if n["product"] == "MIS" and n["buy_price"] > 0 and n["quantity"] > 0:
         BuyingPositions_Symbol.append(n["tradingsymbol"])
 
 
@@ -170,14 +177,14 @@ def ApplyOrders(buying_back, selling_lot, Quantity):
                      transaction_type=kite.TRANSACTION_TYPE_BUY,
                      quantity=Quantity,
                      order_type=kite.ORDER_TYPE_MARKET,
-                     product=kite.PRODUCT_NRML)
+                     product=kite.PRODUCT_MIS)
     kite.place_order(tradingsymbol=selling_lot,
                      exchange=kite.EXCHANGE_NFO,
                      variety=kite.VARIETY_REGULAR,
                      transaction_type=kite.TRANSACTION_TYPE_SELL,
                      quantity=Quantity,
                      order_type=kite.ORDER_TYPE_MARKET,
-                     product=kite.PRODUCT_NRML)
+                     product=kite.PRODUCT_MIS)
 
 
 # *******************************CREATING BUYING and SELLING FUNC TO PLACE ORDERS *******************************************************************************
@@ -198,28 +205,28 @@ def ExitAllOrder(ExitFirst, ExitSecond, firstBuyingPosition, secondBuyingPositio
                      transaction_type=kite.TRANSACTION_TYPE_BUY,
                      quantity=Quantity,
                      order_type=kite.ORDER_TYPE_MARKET,
-                     product=kite.PRODUCT_NRML)
+                     product=kite.PRODUCT_MIS)
     kite.place_order(tradingsymbol=ExitSecond,
                      exchange=kite.EXCHANGE_NFO,
                      variety=kite.VARIETY_REGULAR,
                      transaction_type=kite.TRANSACTION_TYPE_BUY,
                      quantity=Quantity,
                      order_type=kite.ORDER_TYPE_MARKET,
-                     product=kite.PRODUCT_NRML)
+                     product=kite.PRODUCT_MIS)
     kite.place_order(tradingsymbol=firstBuyingPosition,
                      exchange=kite.EXCHANGE_NFO,
                      variety=kite.VARIETY_REGULAR,
                      transaction_type=kite.TRANSACTION_TYPE_SELL,
                      quantity=Quantity,
                      order_type=kite.ORDER_TYPE_MARKET,
-                     product=kite.PRODUCT_NRML)
+                     product=kite.PRODUCT_MIS)
     kite.place_order(tradingsymbol=secondBuyingPosition,
                      exchange=kite.EXCHANGE_NFO,
                      variety=kite.VARIETY_REGULAR,
                      transaction_type=kite.TRANSACTION_TYPE_SELL,
                      quantity=Quantity,
                      order_type=kite.ORDER_TYPE_MARKET,
-                     product=kite.PRODUCT_NRML)
+                     product=kite.PRODUCT_MIS)
 
 # *******************************CREATING ALL EXIT ORDER FUNC TO EXIT ORDERS ***********************************************************************************
 
@@ -243,16 +250,8 @@ InstrumentToken_LTPList = dict.fromkeys(InstrumentTokenList, "-1")
 # ---------------------------------setting time variable to exit all the orders----------------------------------------------------------------------------------
 
 # last three digits tells the time of 3:29:50 second---------------------------------------------------------------
-ExitTime = datetime(1997, 3, 1, 15, 29, 45)
+ExitTime = datetime(1997, 3, 1, 15, 29, 58)
 flag = 0
-
-
-def on_close(ws, code, reason):
-    # On connection close stop the main loop
-    # Reconnection will not happen after executing `ws.stop()`
-    ws.stop()
-
-
 def on_ticks(ws, ticks):
     # ---------------------------- using the first and second position variables inside on_ticks------------------------------------------------------------------
     global instrument_first_position
@@ -273,7 +272,10 @@ def on_ticks(ws, ticks):
             ExitAllOrder(ExitFirst, ExitSecond, firstBuyingPosition,
                          secondBuyingPosition, Quantity)
             flag += 1
-            ws.close()
+            kws.stop()
+            kws.unsubscribe(InstrumentTokenList)
+            kws.close()
+            raise SystemExit
         else:
             print("Have Executed all the Orders")
 
@@ -299,6 +301,7 @@ def on_ticks(ws, ticks):
                                  ["SELL"]-position_token_LTP_FIRST[instrument_first_position]["CURRENT"])*Quantity
     unrealised_second_position = (position_token_LTP_LAST[instrument_second_position]
                                   ["SELL"]-position_token_LTP_LAST[instrument_second_position]["CURRENT"])*Quantity
+
 
     print(int(unrealised_first_position), int(unrealised_second_position))
 

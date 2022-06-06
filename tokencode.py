@@ -11,6 +11,7 @@ import json
 from datetime import datetime, timedelta
 import time
 import math
+import mibian
 
 # --------------------------------Sending Notifications on mobile-----------------------------------------------------------------------------------------------
 # from pushbullet import PushBullet
@@ -126,13 +127,13 @@ print(TradingSymbolList)
 
 # -------------------------------InstrumentTokenList by Reading the Instrument2022.txt File --------------------------------------------------------------------
 
-InstrumentTokenList = [256265, 264969]
+InstrumentTokenList = [8980226, 264969]
 
 data = pd.read_csv("instruments_value.csv")
 for n in TradingSymbolList:
     # InstrumentTokenList.append((data['instrument_token'][(data['tradingsymbol'] == n) & (data['expiry'] == '4/13/2022')]).values[0])
     try:
-        Instrument_token = (data['instrument_token'][(data['tradingsymbol'] == n) & (data['expiry'] == '4/21/2022')]).values[0]
+        Instrument_token = (data['instrument_token'][(data['tradingsymbol'] == n) & (data['expiry'] == ExpiryDate)]).values[0]
         print(Instrument_token)
         InstrumentTokenList.append(int(Instrument_token))
     except LookupError:
@@ -249,7 +250,7 @@ InstrumentToken_LTPList = dict.fromkeys(InstrumentTokenList, "-1")
 # ---------------------------------setting time variable to exit all the orders----------------------------------------------------------------------------------
 
 # last three digits tells the time of 3:29:50 second---------------------------------------------------------------
-ExitTime = datetime(1997, 3, 1, 15, 29, 58)
+ExitTime = datetime(1997, 3, 1, 15, 19, 55)
 flag = 0
 
 
@@ -287,7 +288,7 @@ def on_ticks(ws, ticks):
     # print(InstrumentToken_LTPList)
 
     # --------------------------------getting out the value of NIFTY and India VIX from InstrumentToken_LTPList=--------------------------------------------------
-    Nifty_50_LTP = int(InstrumentToken_LTPList[256265])
+    Nifty_50_LTP = int(InstrumentToken_LTPList[8980226])
     India_Vix_LTP = int(InstrumentToken_LTPList[264969])
     RangeCalculator(Nifty_50_LTP, India_Vix_LTP, 365)
     # ---------------------------- updating the current LTP value of instrument which we have selled to ease down the computations--------------------------------
@@ -365,7 +366,19 @@ def on_ticks(ws, ticks):
 
     # ************************************************* IMP CODE TO PUT BUYING/SELLING ORDERS*********************************************************************
 
+    CallOptionDeltas = []
+    CallOptionDeltas = dict.fromvalues(InstrumentToken_LTPList_CE_check, "-1")
+    for keys in InstrumentToken_LTPList_CE_check:
+        # Daystoexpiration = (ExpiryDate - datetime.now().strftime("%#m/%#d/%Y")).days
+        InstrumentTokenList_TradingSymbolList_dict[keys][-7:-2]
+        impliedVolatility = mibian.BS([Nifty_50_LTP, InstrumentTokenList_TradingSymbolList_dict[keys][-7:-2], 0, 5], callPrice= int(InstrumentToken_LTPList_CE_check[keys]))
+        c= mibian.BS([Nifty_50_LTP, InstrumentTokenList_TradingSymbolList_dict[keys][-7:-2], 0, 5], volatility= int(impliedVolatility.impliedVolatility))
+        call_delta = c.callDelta
+        pprint(impliedVolatility.impliedVolatility)
+        CallOptionDeltas.update({InstrumentToken_LTPList_CE_check[keys]: call_delta})
+    pprint(CallOptionDeltas)
 
+        # pprint(mibian.BS([Nifty_50_LTP, InstrumentTokenList_TradingSymbolList_dict[keys][-7:-2], 0, Daystoexpiration], InstrumentToken_LTPList_CE_check[keys], Put Price, volatility))
 # *******************************SETTING UP LIVE ALGORITHM FOR MANAGING STRANGGLE  *******************************************************************************
 
 def on_connect(ws, response):

@@ -1,0 +1,2 @@
+"C:\Users\ankpachauri\PycharmProjects\HandTrackingProject\venv\Scripts\python.exe" "C:\Users\ankpachauri\Desktop\Desktop\Pyheroku\ShriAshutoshMaharajJi\accesstoken.py"
+pause

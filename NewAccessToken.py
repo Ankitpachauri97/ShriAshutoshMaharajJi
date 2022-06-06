@@ -10,11 +10,12 @@ from datetime import datetime, timedelta
 import time
 import pause
 # push bullet access token and variables
-Pb_access_token = "o.86YtIBmZe3VMJPs94uCbC5W3DUBwEnGY"
+Pb_access_token = "o.Xql9PkQ9h5VbdmpfO9Oe3gf3iShKdhvy"
 pb = Pushbullet(Pb_access_token)
 latestpush = "will get latest data in this variable"
 s2 = "request_token="
 flagship = 0
+outVariable =0
 
 # kite variables
 kws = ""
@@ -88,7 +89,7 @@ def get_login(api_k, api_s):
     my_file.close()
 
     CombinedDateTime(ExecuteTime)   
-
+    
     if (ExecuteTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
         pb.push_note("Status", "started Runnning your main Code")
         RunCmd = "python Expiry2.py"
@@ -103,4 +104,4 @@ while(CrendintialFlag < 0):
     if (CrendintialFlagTime.time() < datetime.now().time() and ExitTime.time() > datetime.now().time()):
         get_login(api_k, api_s)
     else:
-        pause.minutes(6)
+        pause.hours(2)

@@ -10,6 +10,7 @@ import pdb
 import json
 from datetime import datetime, timedelta
 import time
+import math
 
 #--------------------------------Sending Notifications on mobile-----------------------------------------------------------------------------------------------
 from pushbullet import PushBullet
@@ -96,8 +97,8 @@ END = "NIFTY2241318200CE"
 
 # -------------------------------Getting the strike prices range-----------------------------------------------------------------------------------------------
 
-Start_value = int(START[-7:-2]) - int(250)
-End_value = int(END[-7:-2]) + int(250)
+Start_value = int(START[-7:-2]) - int(2000)
+End_value = int(END[-7:-2]) + int(2000)
 
 # -------------------------------StrikePriceList to develop TradingSymbolList ---------------------------------------------------------------------------------
 
@@ -131,8 +132,15 @@ InstrumentTokenList = []
 data = pd.read_csv("instruments_value.csv")
 for n in TradingSymbolList:
 	# InstrumentTokenList.append((data['instrument_token'][(data['tradingsymbol'] == n) & (data['expiry'] == '4/13/2022')]).values[0])
-	InstrumentTokenList.append((data['instrument_token'][(data['tradingsymbol'] == n) & (data['expiry'] == '4/13/2022')]).values[0])
+    try:
+        Instrument_token = (data['instrument_token'][(data['tradingsymbol'] == n) & (data['expiry'] == '4/13/2022')]).values[0]
+        print(Instrument_token)
+        InstrumentTokenList.append(Instrument_token)
+    except LookupError:
+        print("Key Error has been initiated")
 print(InstrumentTokenList)
+
+
 
 # ------------------------------TradingSymbolList_InstrumentTokenList_dict  with TradingSymbol and IntrumentToken for ORDER PUTTING FUNCTION---------------------
 
@@ -151,7 +159,7 @@ InstrumentTokenList_TradingSymbolList_dict = dict(
 # *******************************CREATING BUYING and SELLING FUNC TO PLACE ORDERS *******************************************************************************
 
 Quantity = abs(Quantity[0])
-Product_MIS_NRML = 'kite.PRODUCT_'+ PRODUCT_MIS_NRML
+Product_MIS_NRML = 'kite.PRODUCT_'+ str(PRODUCT_MIS_NRML)
 
 def ApplyOrders(buying_back, selling_lot, Quantity):
     kite.place_order(tradingsymbol=buying_back,
@@ -342,7 +350,6 @@ def on_ticks(ws, ticks):
             ApplyOrders(buying_back, selling_lot, Quantity)
             del position_token_LTP_LAST[instrument_second_position]
             instrument_second_position = Closest_instrument_value
-            pb.push_note("Moved down the call to", InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value])
             position_token_LTP_LAST[instrument_second_position] = {"SELL": InstrumentToken_LTPList[Closest_instrument_value],
                                                                    "CURRENT": InstrumentToken_LTPList[Closest_instrument_value], "QUANTITY": Quantity, "TRADINGSYMBOL": InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value]}
 
@@ -360,7 +367,6 @@ def on_ticks(ws, ticks):
             ApplyOrders(buying_back, selling_lot, Quantity)
             del position_token_LTP_FIRST[instrument_first_position]
             instrument_first_position = Closest_instrument_value
-            pb.push_note("Moved up the put to", InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value])
             position_token_LTP_FIRST[instrument_first_position] = {"SELL": InstrumentToken_LTPList[Closest_instrument_value],
                                                                    "CURRENT": InstrumentToken_LTPList[Closest_instrument_value], "QUANTITY": Quantity, "TRADINGSYMBOL": InstrumentTokenList_TradingSymbolList_dict[Closest_instrument_value]}
 

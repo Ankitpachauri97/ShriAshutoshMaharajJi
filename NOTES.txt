@@ -1,2 +1,0 @@
-1)Please Make sure to check Quantity variable //line 133
-2) Make sure to change the index of position[] First_data=all_positions[1] Second_data=all_positions[2] line 33
